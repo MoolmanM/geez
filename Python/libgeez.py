@@ -18,8 +18,8 @@ argsubparsers.required = True
 def main(argv=sys.argv[1:]):
     args = argparser.parse_args(argv)
     match args.command:
-        case: "init"        : cmd_init(args)
-        case: _             : print("Not a command.")
+        case "init"        : cmd_init(args)
+        case _             : print("Not a command.")
 
 class GitRepository(object):
     """A git respository"""
@@ -85,7 +85,7 @@ def repo_create(path):
 
     # First, we make sure the path either doesn't exist or is an empty dir.
     
-    if os.path.exists(repo.wortktree):
+    if os.path.exists(repo.worktree):
         if not os.path.isdir(repo.worktree):
             raise Exception (f"{path} is not a directory!")
         if os.path.exists(repo.gitdir) and os.listdir(repo.gitdir):
@@ -121,3 +121,13 @@ def repo_default_config():
     ret.set("core", "bare", "false")
 
     return ret
+
+argsp = argsubparsers.add_parser("init", help="Initialize a new, empty repository.")
+
+argsp.add_argument("path",
+                   metavar="directory",
+                   nargs="?",
+                   default=".",
+                   help="Where to create the repository")
+def cmd_init(args):
+    repo_create(args.path)

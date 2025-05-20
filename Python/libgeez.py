@@ -96,7 +96,7 @@ def repo_create(path):
     assert repo_dir(repo, "branches", mkdir=True)
     assert repo_dir(repo, "objects", mkdir=True)
     assert repo_dir(repo, "refs", "tags", mkdir=True)
-    assert repo_dir(repo, "refs", "heads", mkdir=True)    
+    assert repo_dir(repo, "refs", "heads", mkdir=True)
 
     # .git/description
     with open(repo_file(repo, "description"), "w") as f:
@@ -152,3 +152,36 @@ def repo_find(path=".", required=True):
 
     # Recursive case
     return repo_find(parent, required)
+
+    # Hashing
+    #
+    # 00000000  63 6f 6d 6d 69 74 20 31  30 38 36 00 74 72 65 65  |commit 1086.tree|
+    # 00000010  20 32 39 66 66 31 36 63  39 63 31 34 65 32 36 35  | 29ff16c9c14e265|
+    # 00000020  32 62 32 32 66 38 62 37  38 62 62 30 38 61 35 61  |2b22f8b78bb08a5a|
+    # ASCII space (0*20)
+    #
+    # First 48 bytes of a commit object
+    
+    class GitObject(object):
+        def __init__(self, data=None):
+            if data != None:
+                self.deserialize(data)
+            else:
+                self.init()
+
+        def serialize(self, repo):
+            """This function MUST be implemented by subclass.
+
+                It must read the object's contents from self.data, a byte string, 
+                do whatever it takes to convert it into a meaningful representation.
+                What exactly that means depend on each subclass.
+            """
+
+            raise Exception("Unimplemented")
+
+        def deserialize(self, data):
+            raise Exception("Unimplemented")
+
+        def init(self):
+            pass # Do nothing
+

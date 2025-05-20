@@ -12,7 +12,7 @@ import zlib
 
 argparser = argparse.ArgumentParser(description="testing")
 
-argsubparsers = argparser.add_argument(title="Commands", dest="command")
+argsubparsers = argparser.add_subparsers(title="Commands", dest="command")
 argsubparsers.required = True
 
 def main(argv=sys.argv[1:]):
@@ -30,7 +30,7 @@ class GitRepository(object):
 
     def __init__(self, path, force=False):
         self.worktree = path
-        self.gitdree = os.path.join(path, ".git")
+        self.gitdir = os.path.join(path, ".git")
 
         if not (force or os.path.isdir(self.gitdir)):
             raise Exception(f"Not a Git repository {path}")
@@ -50,15 +50,15 @@ class GitRepository(object):
                 raise Exception("Unsupported respositoryformatversion: {vers}")
 
 def repo_path(repo, *path):
-    """Compute path under repo's gitdir"""
+    """Compute path under repo's gitdir."""
     return os.path.join(repo.gitdir, *path)
 
 def repo_file(repo, *path, mkdir=False):
     """Same as repo_path, but create dirname(*path) if absent. For example, repo_file(r, \"refs\", \remotes\", \"origin\", \"HEAD\") 
         will create .git/refs/remotes/origin."""
 
-    if repo_dir(repo[:-1], mkdir=mkdir):
-        return repo_path(path, *path)
+    if repo_dir(repo, *path[:-1], mkdir=mkdir):
+        return repo_path(repo, *path)
 
 def repo_dir(repo, *path, mkdir=False):
     """Same as repo_path but mkdir *path if absent if mkdir"""
@@ -145,10 +145,10 @@ def repo_find(path=".", required=True):
         # Bottom case
         # os.path.join("/", "..") == "/":
         # if parent=path, then path is root
-    if required:
-        raise Exception("No git directory.")
-    else:
-        return None
+        if required:
+            raise Exception("No git directory.")
+        else:
+            return None
 
     # Recursive case
     return repo_find(parent, required)

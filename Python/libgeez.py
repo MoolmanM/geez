@@ -10,13 +10,19 @@ import re
 import sys
 import zlib
 
-argparser = argparse.ArgumentParser(description="testing")
+argparser = argparse.ArgumentParser(description="")
 
 argsubparsers = argparser.add_subparsers(title="Commands", dest="command")
 argsubparsers.required = True
 
 def main(argv=sys.argv[1:]):
+    '''
+        Take the command-line arguments given to the script.
+        Skip the first item (sys.argv[0]), which is just the script name itself.
+    '''
+
     args = argparser.parse_args(argv)
+    # Match input arguments with args.command
     match args.command:
         case "init"        : cmd_init(args)
         case _             : print("Not a command.")
@@ -71,7 +77,6 @@ def repo_dir(repo, *path, mkdir=False):
         else:
             raise Exception(f"Not a directory {path}")
 
-            
     if mkdir:
         os.makedirs(path)
         return path
@@ -183,7 +188,7 @@ def object_read(repo, sha):
 
     path = repo_file(repo, "objects", sha[0:2], sha[2:])
 
-    if not os.path.isfile(path)
+    if not os.path.isfile(path):
         return None
 
     with open(path, "rb") as f:
@@ -206,7 +211,7 @@ def object_read(repo, sha):
             case b'tag'     : c=GitTag
             case b'blob'    : c=GitBlob
             case _:
-                raise Exception(f"Unknown type {fmt.decode("ascii")} for object {sha})
+                raise Exception(f"Unknown type {fmt.decode("ascii")} for object {sha}")
 
         # Call constructor and return object
         return c(raw[y+1:])

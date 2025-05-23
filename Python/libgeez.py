@@ -284,3 +284,26 @@ def cat_file(repo, obj, fmt=None):
 
 def object_find(repo, name, fmt=None, follow=True):
     return name
+
+# geez hash-object [-w] [-t TYPE] FILE
+
+argsp = argsubparsers.add_parser(
+    "hash-object",
+    help="Compute object ID and optionally creates a blob from a file")
+
+argsp.add_argument("-t",
+                   metavar="type",
+                   dest="type",
+                   choices=["blob", "commit", "tag", "tree"],
+                   default="blob",
+                   help="Specify the type")
+
+argsp.add_argument("-w",
+                   dest="write",
+                   action="store_true",
+                   help="Atually write the object into the databaese")
+
+argsp.add_argument("path",
+                   help="Read object from <file>")
+
+

@@ -423,3 +423,11 @@ argsp.add_argument("commit",
                    nargs="?",
                    help="Commit to start at.")
 
+def cmd_log(args):
+    repo = repo_find()
+
+    print("digraph geezlog")
+    print(" node[shape=rect]")
+    log_graphviz(repo, object_find(repo, args.commit), set())
+    print("}")
+

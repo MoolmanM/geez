@@ -513,3 +513,18 @@ def tree_leaf_sort_key(leaf):
         return leaf.path
     else:
         return leaf.path + "/"
+
+# Then the serialzer itself. This one is very simple: we sort
+# the items using our newly created function as a transformer, then write them in order.
+
+def tree_serialize(obj):
+    obj.items.sort(key=tree_leaf_sort_key)
+    ret = b''
+    for i in obj.items:
+        ret += i.mode
+        ret += b' '
+        ret += i.path.encode("utf8")
+        ret += b'x00'
+        sha = int(i.sha, 16)
+        ret += sha.to_bytes(20, byteorder="big")
+    return ret

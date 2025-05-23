@@ -491,4 +491,14 @@ def tree_parse_one(raw, start=0):
     sha = format(raw_sha, "040x")
     return y+21, GitTreeLead(mode, path.decode("utf8"), sha)
                              
+# The "real" parser which just calls the previous one in a loop,
+# until input data is exhausted.
+def tree_parse(raw):
+    pos = 0
+    max = len(raw)
+    ret = list()
+    while pos < max:
+        pos, data = tree_parse_one(raw, pos)
+        ret.append(data)
 
+    return ret

@@ -528,3 +528,16 @@ def tree_serialize(obj):
         sha = int(i.sha, 16)
         ret += sha.to_bytes(20, byteorder="big")
     return ret
+
+# Now just have to combine all that into a class:
+class GitTree(GitObject):
+    fmt=b'tree'
+
+    def deserialize(self, data):
+        self.items = tree_parse(data)
+
+    def serialize(self):
+        return tree_serialize(self)
+
+    def init(self):
+        self.items = list()

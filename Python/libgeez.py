@@ -416,3 +416,10 @@ class GitCommit(GitObject):
 
     def init(self):
         self.kvlm = dict()
+
+argsp = argsubparsers.add_parser("log", help="Display history of a given commit.")
+argsp.add_argument("commit",
+                   default="HEAD",
+                   nargs="?",
+                   help="Commit to start at.")
+

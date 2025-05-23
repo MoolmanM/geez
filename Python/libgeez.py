@@ -89,6 +89,8 @@ def repo_create(path):
     repo = GitRepository(path, True)
 
     # First, we make sure the path either doesn't exist or is an empty dir.
+    # repo.worktree -> /home/user/project
+    # repo.gitdir -> /home/user/project/.git
     
     if os.path.exists(repo.worktree):
         if not os.path.isdir(repo.worktree):
@@ -120,6 +122,11 @@ def repo_create(path):
 def repo_default_config():
     ret = configparser.ConfigParser()
 
+    # [core]
+    # repositoryformatversion = 0
+    # filemode = false
+    # bare = false
+    
     ret.add_section("core")
     ret.set("core", "repositoryformatversion", "0")
     ret.set("core", "filemode", "false")
@@ -186,11 +193,16 @@ def object_read(repo, sha):
         Return a GitObject whose exact type depends
         on the object."""
 
+    # Splits the 40-character hash into two parts:
+    # First 2 characters form a directory
+    # Remaining 38 characters form the filename inside the directory
+
     path = repo_file(repo, "objects", sha[0:2], sha[2:])
 
     if not os.path.isfile(path):
         return None
 
+    # Read only, binary
     with open(path, "rb") as f:
         raw = zlib.decompress(f.read())
 
@@ -199,12 +211,18 @@ def object_read(repo, sha):
         fmt = raw[0:x]
 
         # Read and validate object size
+        # Finds the null byte separating header from body.
+        # Extracts and converts the size field to integer.
         y = raw.find(b'\x00', x)
         size = int(raw[x:y].decode("ascii"))
+
+        # Confirms size is correct: reported size should
+        # match actual size of the data payload.
         if size != len(raw)-y-1:
             raise Exception(f"Malformed object {sha}: bas length")
         
         # Pick contructor
+        # Determines the class to use based on object type.
         match fmt:
             case b'commit'  : c=GitCommit
             case b'tree'    : c=GitTree

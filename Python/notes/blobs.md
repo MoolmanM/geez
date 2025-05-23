@@ -3,7 +3,7 @@
 ## Overview
 
 Git supports four object types:
-- 'blob'
+- `blob'
 - 'tree'
 - 'commit'
 - 'tag'
@@ -18,23 +18,21 @@ Git supports four object types:
 ### Characteristics
 
 - **Format**:
-'blob <size>\0<file data>'
+`blob <size>\0<file data>`
 - **No Parsing required**:
 - No headers or fields beyond the initial object header
 - Stored as-is (raw bytes)
 
 - **Ideal for Direct Mapping**
-- 'serialize()' -> returns input as-is
-- 'deserialize()' -> returns data as-is
+- `serialize()` -> returns input as-is
+- `deserialize()` -> returns data as-is
 
 ### Example
 
-'''
-echo "Hello" | git hash-object --stdin -w
-'''
+`echo "Hello" | git hash-object --stdin -w`
 - Stores a blob containing "Hello"
 - Internally saved as:
-'blob 6\0Hello'
+`blob 6\0Hello`
 
 ### Summary
 
@@ -52,32 +50,30 @@ Git uses blobs to store the actual contents of files in your project.
 
 ## Real example
 
-You have a file named 'hello.txt':
+You have a file named `hello.txt`:
 hello.txt:
-'Hello, world!'
+`Hello, world!`
 
 ### Step 1: Store it as Blob
 
-'''
-git hash-object -w hello.txt
-'''
+`git hash-object -w hello.txt`
 
 Git will:
-- Read the contents of 'hello.txt'
+- Read the contents of `hello.txt`
 - Add a header: blob 13 (13 is the number of bytes in "Hello, world!\n")
 - Combine it:
-'blob 13\0Hello, world!'
+`blob 13\0Hello, world!`
 
 - Compute a SHA-1 hash of that full data
 - Compress it
-- Store it in '.git/objects/<hash>'
+- Store it in `.git/objects/<hash>`
 
 ### Step 2: View the Blob
 
-'git cat-file -p <hash>'
+`git cat-file -p <hash>`
 
 Output:
-'Hello, world!'
+`Hello, world!`
 
 ### Why Use Blobs?
 - Git can store duplicate file contents only once

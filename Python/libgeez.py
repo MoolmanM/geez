@@ -462,5 +462,8 @@ def log_graphviz(repo, sha, seen):
         print(f"  c_{sha} -> c_{p};")
         log_graphviz(repo, p, seen)
 
-
-
+class GitTreeLead(object):
+    def __init__(self, mode, path, sha):
+        self.mode = mode
+        self.path = path
+        self.sha = sha

@@ -467,3 +467,28 @@ class GitTreeLead(object):
         self.mode = mode
         self.path = path
         self.sha = sha
+
+def tree_parse_one(raw, start=0):
+    # Find the space terminator of the mode
+    x = raw.find(b' ', start)
+    assert x-start == 5 or x-start==6
+
+    # Read the mode
+    mode = raw[start:x]
+    if len(mode) == 5:
+        # Normalize to six bytes.
+        mode = b"0" + mode
+
+    # Find the NULL terminator of the path
+    y = raw.find(b'\x00', x)
+    # and read the path
+    path = raw[x+1:y]
+
+    # Read the SHA
+    raw_sha = int.from_bytes(raw[y+1:y+21], "big")
+    # and convert it into an hex string, padded to 40 chars
+    # with zeros if needed
+    sha = format(raw_sha, "040x")
+    return y+21, GitTreeLead(mode, path.decode("utf8"), sha)
+                             
+

@@ -645,3 +645,17 @@ def ref_resolve(repo, ref):
         return ref_resolve(repo, data[5:])
     else:
         return data
+
+def ref_list(repo, path=None):
+    if not path:
+        path = repo_dir(repo, "refs")
+    ret = dict()
+    # Git shows refs sorted. To do the same, we sort the ouput of listdir
+    for f in sorted(os.listdir(path)):
+        can = os.path.join(path, f)
+        if os.path.isdir(can):
+            ret[f] = ref_list(repo, can)
+        else:
+            ret[f] = ref_resolve(repo, can)
+
+    return ret

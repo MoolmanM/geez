@@ -552,10 +552,12 @@ argsp.add_argument("tree",
                    help="A tree-ish object.")
 
 def cmd_ls_tree(args):
+    '''Entry point for 'le_tree' command; locates repo and prints tree contents.'''
     repo = repo_find()
     ls_tree(repo, args.tree, args.recursive)
 
 def ls_tree(repo, ref, recursive=None, prefix=""):
+    '''Resolves a tree object from ref and prints its contents, optionally recursively.'''
     sha = object_find(repo, ref, fmt=b"tree")
     obj = object_read(repo, sha)
     for item in obj.items:
@@ -585,6 +587,10 @@ argsp.add_argument("path",
                    help="The EMPTY directory to checkout on.")
 
 def cmd_checkout(args):
+    '''Checkout a commit or tree object into an empty target directory.
+        verifies the object is a tree (or gets it from a commit),
+        ensures the path is an empty dir, then unpacks the tree recursively.'''
+
     repo = repo_find()
 
     obj = object_read(repo, object_find(repo, args.commit))
@@ -605,6 +611,9 @@ def cmd_checkout(args):
     tree_checkout(repo, obj, os.path.realpath(args.path))
 
 def tree_checkout(repo, tree, path):
+    '''Recursively writes the contents of a tree object to disk.
+        Creates directories and writes blobs as file into the target path.'''
+
     for item in tree.items:
         obj = object_read(repo, item.sha)
         dest = os.path.join(path, item.path)

@@ -462,7 +462,7 @@ def log_graphviz(repo, sha, seen):
         print(f"  c_{sha} -> c_{p};")
         log_graphviz(repo, p, seen)
 
-class GitTreeLead(object):
+class GitTreeLeaf(object):
     def __init__(self, mode, path, sha):
         self.mode = mode
         self.path = path
@@ -489,7 +489,7 @@ def tree_parse_one(raw, start=0):
     # and convert it into an hex string, padded to 40 chars
     # with zeros if needed
     sha = format(raw_sha, "040x")
-    return y+21, GitTreeLead(mode, path.decode("utf8"), sha)
+    return y+21, GitTreeLeaf(mode, path.decode("utf8"), sha)
                              
 # The "real" parser which just calls the previous one in a loop,
 # until input data is exhausted.

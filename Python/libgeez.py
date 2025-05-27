@@ -659,3 +659,22 @@ def ref_list(repo, path=None):
             ret[f] = ref_resolve(repo, can)
 
     return ret
+
+argsp = argsubparsers.add_parser("show-ref", help="List references.")
+
+def cmd_show_ref(args):
+    repo = repo_find()
+    refs = ref_list(repo)
+    show_ref(repo, refs, prefix="refs")
+
+def show_ref(repo, refs, with_hash=True, prefix=""):
+    if prefix:
+        prefix = prefix + '/'
+    for k, v in refs.items():
+        if type(v) == str and with_hash:
+            print (f"{v} {prefix}{k}")
+        elif type(v) == str:
+            print (f"{prefix}{k}")
+        else:
+            show_ref(repo, v, with_hash=with_hash, prefix=f"{prefix}{k}")
+    

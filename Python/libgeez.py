@@ -732,3 +732,7 @@ def tag_create(repo, name, ref, create_tag_object=False):
     else:
         # create lightweight tag (ref)
         ref_create(repo, "tags/", + name, sha)
+
+def ref_create(repo, ref_name, sha):
+    with open(repo_files(repo, "refs/" + ref_name), 'w') as fp:
+        fp.write(sha + "\n")

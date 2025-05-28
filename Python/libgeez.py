@@ -712,6 +712,7 @@ def cmd_tag(args):
         refs = ref_list(repo)
         show_ref(repo, refs["tags"], with_hash=False)
 
+# TODO: Redo Notes structures
 def tag_create(repo, name, ref, create_tag_object=False):
     # get the GitObject from the object reference
     sha = object_find(repo, ref)

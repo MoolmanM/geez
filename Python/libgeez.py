@@ -697,3 +697,15 @@ argsp.add_argument("object",
                    nargs="?",
                    help="The object the new tag will point to")
 
+def cmd_tag(args):
+    repo = repo_find()
+
+    if args.name:
+        tag_create(repo,
+                   args.name,
+                   args.object,
+                   create_tag_object = args.create_tag_object)
+    else:
+        refs = ref_list(repo)
+        show_ref(repo, refs["tags"], with_hash=False)
+
